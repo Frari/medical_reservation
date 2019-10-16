@@ -1,18 +1,22 @@
 import React, {Component} from 'react';
 import uuid from 'uuid';
 
+//creo una copia dello state per azzerare gli input dopo il submit
+const stateStart = { 
+                        appointment : {
+                            pet : '',
+                            owner : '',
+                            date : '',
+                            time : '',
+                            symptoms : ''
+                        },
+                        error : false
+                    }
+
 class NewExamination extends Component {
-    state = { 
-        appointment : {
-            pet : '',
-            owner : '',
-            date : '',
-            time : '',
-            symptoms : ''
-        },
-        error : false
-     }
-     //quando l'utente scrive nel form
+    state = { ...stateStart} //creo una copia successiva. Qui prima c'era lo state originale
+     
+    //quando l'utente scrive nel form
      handleChange = (e) => {
         //inserire quello che l'utente scrive dentro state
         this.setState({
@@ -43,16 +47,28 @@ class NewExamination extends Component {
          //aggiungere i valori allo state di App
         //  this.props.createNewAppointment(this.state.appointment)----cambiato perchè passo una copia e non più l'originale
          this.props.createNewAppointment(newAppointment);
+
+         //inserire nello state origianale la copia cioè stataStart
+         this.setState({
+             ...stateStart
+         })
      }
 
     
      render() { 
+        //estraggo il valore di error dallo state per visualizzare il messaggio di errore
+        const {error} = this.state;
+
+
         return ( 
             <div className='card mt-5 py-5'>
                 <div className='card-body'>
                     <h2 className='card-title text-center mb-5'>
                         Fill out the form to have a new appointment
                     </h2>
+                    
+                    { error ? <div className='alert alert-danger mt-2 mb-5 text-center'> All fields are obligatory </div> : null}
+
                     <form onSubmit = {this.handleSubmit}>
                         <div className='form-group row'>
                             <label className='col-sm-4 col-lg-2 col-form-label'>
